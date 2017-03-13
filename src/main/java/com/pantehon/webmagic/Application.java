@@ -2,6 +2,7 @@ package com.pantehon.webmagic;
 
 import com.pantehon.webmagic.spider.downloader.HtmlUnitDownLoader;
 import com.pantehon.webmagic.spider.pageprocessor.WxImagePageProcessor;
+import com.pantehon.webmagic.spider.pipeline.FileDownloadPipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -29,6 +30,8 @@ public class Application implements CommandLineRunner{
         Spider.create(new WxImagePageProcessor())
                 .addUrl("https://image.baidu.com/search/index?ct=201326592&cl=2&st=-1&lm=-1&nc=1&ie=utf-8&tn=baiduimage&ipn=r&rps=1&pv=&fm=rs4&word=2016%E6%9C%80%E7%81%AB%E5%BE%AE%E4%BF%A1%E5%A4%B4%E5%83%8F&oriquery=%E5%BE%AE%E4%BF%A1%E6%89%8B%E7%BB%98%E5%A4%B4%E5%83%8F%E7%AE%80%E7%BA%A6&ofr=%E5%BE%AE%E4%BF%A1%E6%89%8B%E7%BB%98%E5%A4%B4%E5%83%8F%E7%AE%80%E7%BA%A6")
                 .addPipeline(new ConsolePipeline())
+                .addPipeline(new FileDownloadPipeline("C:\\wxImages"))
+//                .addPipeline(new FileDownloadPipeline("C:\\image.baidu.com"))
                 .addPipeline(new FilePipeline("C:\\"))
 //                .setDownloader(new SeleniumDownloader("C:\\00_Software\\chromedriver_win32\\chromedriver.exe"))
                 .setDownloader(htmlUnitDownLoader)
