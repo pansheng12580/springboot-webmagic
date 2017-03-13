@@ -63,6 +63,7 @@ public abstract class BasePageProcessor implements PageProcessor {
             .setTimeOut(5000)
             .setCharset(HTTP.UTF_8)
             .setCycleRetryTimes(3)
+            .setUseGzip(true)
 //            .setDomain(domain)
             .setUserAgent(USER_AGENTS[new Random().nextInt(USER_AGENTS.length)]);
 
