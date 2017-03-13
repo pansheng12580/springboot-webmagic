@@ -29,8 +29,10 @@ public class WxImagePageProcessor extends BasePageProcessor {
         logger.info("page.addTargetRequest:"+ StringUtils.join(page.getTargetRequests(),"----"));
 
         //*[@id="imgid"]/div/ul/li[1]/div/a/img
-        page.putField("imagesUrl", page.getHtml().xpath("//div[@class='imgbox']/a/img/@data-imgurl").all());
-//        page.putField("imagesUrl", page.getHtml().xpath("//img/@src").replace("//","http://").all());
+        //page.putField("imagesUrl", page.getHtml().xpath("//div[@class='imgbox']/a/img/@data-imgurl").all());
+
+        page.putField("imageTitles",page.getHtml().xpath("li[@class='imgitem']/@data-title").all());
+        page.putField("imageUrls",page.getHtml().xpath("li[@class='imgitem']/div[@class='imgbox']/a/img/@data-imgurl").all());
     }
 
 

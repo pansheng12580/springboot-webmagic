@@ -73,12 +73,7 @@ public class HtmlUnitDownLoader implements Downloader, Closeable {
             while(webElement.hasNext()) {
                 Map.Entry content = (Map.Entry)webElement.next();
                 Cookie cookie = new Cookie(task.getSite().getDomain(),(String)content.getKey(), (String)content.getValue());
-//                try {
-                    manager.addCookie(cookie);
-//                    webClient.addCookie(cookie.toString(), new URL(request.getUrl()),null);
-//                } catch (MalformedURLException e) {
-//                    e.printStackTrace();
-//                }
+                manager.addCookie(cookie);
             }
         }
 

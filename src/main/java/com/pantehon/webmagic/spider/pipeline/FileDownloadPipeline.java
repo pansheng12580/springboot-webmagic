@@ -16,7 +16,8 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,31 +37,36 @@ public class FileDownloadPipeline extends FilePersistentBase implements Pipeline
         this.checkAndMakeParentDirecotry(path + PATH_SEPERATOR);
 
         logger.info("url:\t" + resultItems.getRequest().getUrl());
-        Iterator iterator = resultItems.getAll().entrySet().iterator();
 
-        StopWatch stopWatch = new StopWatch("文件下载耗时");
-        stopWatch.start();
+        List<String> imageTitles = new ArrayList<String>();
+        List<String> imageUrls = new ArrayList<String>();
 
-        while(true) {
-            while(iterator.hasNext()) {
-                Map.Entry entry = (Map.Entry)iterator.next();
-                if(entry.getValue() instanceof Iterable) {
-                    Iterable value = (Iterable)entry.getValue();
+        //找到匹配信息
+        for(Map.Entry<String,Object> entry:resultItems.getAll().entrySet()){
+            String key = entry.getKey();
 
-                    Iterator var8 = value.iterator();
-
-                    while(var8.hasNext()) {
-                        Object o = var8.next();
-                        this.downloadFile(o.toString());
-                    }
-                } else {
-                    logger.info((String)entry.getKey() + ":\t" + entry.getValue());
-                }
+            if("imageTitles".equals(key)){
+                imageTitles = (ArrayList<String>)entry.getValue();
+            }else if("imageUrls".equals(key)){
+                imageUrls = (ArrayList<String>)entry.getValue();
             }
-            break;
-        }
-        stopWatch.stop();
 
+        }
+
+        StopWatch stopWatch = new StopWatch("文件下载");
+        stopWatch.start("微信图片下载");
+
+        if(imageTitles.size() == imageUrls.size()){
+            logger.info("imageTitles.size() == imageUrls.size(),信息匹配成功!");
+            for(int i=0;i<imageUrls.size();i++){
+                //开始下载
+                this.downloadFile(imageUrls.get(i));
+            }
+        }else {
+            logger.error("imageTitles.size() != imageUrls.size(),信息匹配失败!");
+        }
+
+        stopWatch.stop();
         logger.info(stopWatch.prettyPrint());
 
     }
@@ -70,11 +76,19 @@ public class FileDownloadPipeline extends FilePersistentBase implements Pipeline
      * @param urlString
      */
     private void downloadFile(String urlString){
+        this.downloadFile(urlString,System.currentTimeMillis()+"");
+    }
+
+    /**
+     * 根据URL下载文件
+     * @param urlString
+     */
+    private void downloadFile(String urlString,String fileName){
         int index = urlString.lastIndexOf(".");
         String filePath = urlString.substring(index,urlString.length());
 
-        //获取文件名称,格式： 时间戳.jpg
-        filePath = this.getPath() + System.currentTimeMillis() + filePath;
+        //获取文件名称,格式： fileName.jpg
+        filePath = this.getPath() + fileName + filePath;
 
         OutputStream outputStream = null;
 
